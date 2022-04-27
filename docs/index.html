@@ -1,1 +1,145 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body {
+              padding: 100px;
+              width: 1000px;
+              margin: auto;
+              text-align: left;
+              font-weight: 300;
+              font-family: 'Open Sans', sans-serif;
+              color: #121212;
+            }
+            h1, h2, h3, h4 {
+              font-family: 'Source Sans Pro', sans-serif;
+            }
+          </style>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>CS 184 Final Project Milestone Report</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+    </head>
+    <body>
+        
+        <h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2022</h1>
+        <h1 align="middle">Final Project Checkpoint 4/26</h1>
+        <h2 align="middle">David McAllister, James Dai, Shilpa Sathyanathan, Ethan Gnibus</h2>
 
+        <br>
+        <h2 align="middle">Project Overview</h2>
+        <p>
+        We are making an iOS AR application to display the barycentric coordinates of Memorial Stadium's
+        football field. The idea behind our project is that if we can orient the barycentric coordinates
+        of the football field consistenly from every point in the stadium, then we would be able to orient
+        a mesh to face a consistent direction regardless of where we are standing. We are implementing
+        our project using Swift and Metal.
+        </p>
+        <br>
+
+        <h2 align="middle">Our Progress</h2>
+        <h4 align="left">
+            Starter Project
+        </h4>
+        <p>
+            We decided to use <a href="http://developer.apple.com/documentation/arkit/environmental_analysis/creating_a_fog_effect_using_scene_depth">this</a>
+            fog effect project as a base for our project. So far we have implemented
+            Sobel Edge Detection and Hough Transform to detect lines on the football field.
+            We made a paper printout to demo our line detection and also tested our project in person
+            inside of Memorial Stadium. The printout can be seen below:
+        </p>
+        <div align="center">
+            <img src="images/printout.png" width="480px"/>
+            <figcaption align="middle">Memorial printout</figcaption>
+        </div>
+
+        <h4 align="left">
+            Sobel Edge Detection
+        </h4>
+        <p>
+            We decided to use edge detection to extract features from the input video. This form of
+            processing allows us to simplify images into black and white, where edges of the input
+            image are white and everything else is black. After applying this filter,
+            our output image looks like the folllowing:
+        </p>
+        <div center="middle">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                        <img src="images/printout_edge.png" width="480px"/>
+                        <figcaption align="middle">Memorial printout after Sobel Edge Detection</figcaption>
+                    <td align="middle">
+                        <img src="images/stadium_edge.png" width="480px"/>
+                        <figcaption align="middle">Memorial Stadium after Sobel Edge Detection</figcaption>
+                
+            </table>
+        </div>
+        <h4 align="left">
+            Hough Transform
+        </h4>
+        <p>
+            Implementing Sobel Edge Detection made it possible to use Hough Transform to detect lines
+            from the white edges.
+            After using Hough Transform, we can
+            accurately detect the stadium's lines. However, we need to work on filtering
+            out irrelevant lines before extracting points on the stadium. Below is an example
+            image of how our program looks after Sobel Edge Detection and Hough Transform
+            are applied to an input image.
+        </p>
+        <div align="center">
+            <img src="images/printout_with_edges.png" width="480px"/>
+            <figcaption align="middle">Memorial printout after Hough Transform</figcaption>
+        </div>
+        <br><br>
+
+        <h2 align="middle">Our future plans</h2>
+        <p>
+            Now that we are correctly detecting lines, we can proceed with drawing barycentric
+            coordinates of the stadium onto the field. First, we need to filter the lines we
+            recieve from Hough Transform until we are only left with the visible end lines and the
+            sidelines. Next, we need to use the dimensions of the field to calculate any missing
+            lines. After that, we need to use the intersections between (end line, side line) pairs
+            to extract the corners of the field. After this, we need to interpolate between the corners
+            to draw the barycentric coordinates of the field onto the field. We also need to find a way
+            to make sure the colors are oriented the same regardless of one's position in the stadium.
+        </p>
+        <br><br>
+
+        <h2 align="middle">Problems We Noticed</h2>
+        <h4 align="left">
+            Edge Detection
+        </h4>
+        <p>
+            When we went to the stadium, we noticed that our application was mistaking the stands
+            as lines on the field. Notice how some of the lines below completely miss the stadium:
+        </p>
+        <div align="center">
+            <img src="images/stadium_with_lines.png" width="480px"/>
+            <figcaption align="middle">Memorial Stadium after Hough Transform</figcaption>
+        </div>
+        <p>
+            To fix this, we plan on editing our Sobel Edge detection function to only draw edges on
+            the green-white edges that can be found on the football field. As a simple fix, we also
+            made a mask to eliminate the stands entirely:
+        </p>
+        <div align="center">
+            <img src="images/difference.png" width="480px"/>
+            <figcaption align="middle">Memorial Stadium after temporary mask</figcaption>
+        </div>
+        <h4 align="left">
+            Speed
+        </h4>
+        <p>
+            Our app is running slower than expected so if we have time once we finish the MVP, we want
+            to make it faster. Right now we are doing preprocessing on the CPU. To combat this, we plan to
+            to convert all our preprocessing to the GPU, add downsampling as a step in our preprocessing
+            pipeline, and pruning calculations during Hough Transform.
+        </p>
+        <br><br>
+        
+        
+        <script src="" async defer></script>
+    </body>
+</html>
